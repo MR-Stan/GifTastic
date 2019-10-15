@@ -1,22 +1,74 @@
+let gameObject = {
 
-// Initial array of movies
-var movies = ["The Matrix", "The Notebook", "Mr. Nobody", "The Lion King"];
+    // array of searches, buttons created based on content of this, stored in localStorage
+    itemArray : [],
+
+    // 
+    search : "",
+
+    // Giphy API key
+    key : "BImvRhJyYtNtABPNHp8mKOJB36yjcfK2",
+
+    // number of gifs display on screen after button click
+    resultNumber : 10, // returns 10 results
+
+    // connects to giphy to obtain gifs
+    queryURL : `https://api.giphy.com/v1/gifs/search?q=${search}&api_key=${key}&limit=${resultNumber}`,
+
+    // create intial HTML elements
+    initialHtml : function() {
+
+        $("<form id='searchForm'>").appendTo("main");
+
+            $("<p/>").text("Search: ").appendTo("#searchForm");
+
+            $("<textarea/>").attr("id", "searchInput").appendTo("#searchForm");
+
+            $("<button>").attr("id", "searchButton").appendTo("#searchForm");
+
+        $("<div/>").attr("id", "buttonContainer").appendTo("main");
+    },
+
+    // create buttons based on contents of itemArray
+    createButtons : function() {
+        $("#buttonContainer").empty();
+        this.itemArray.forEach(function(i) {
+            $("<button>").attr("data-name", gameObject.itemArray[i]).text(gameObject.itemArray[i]).appendTo("#buttonContainer");
+        });
+    },
+
+
+    workingButtons : function() {
+        // creates AJAX call for the specific movie button being clicked
+        $.ajax({
+            url: gameObject.queryURL,
+            method: "GET"
+            }).then(function(response) {
+            let results = response.data;
+            console.log(response);
+            });
+    },
+
+    search : function(result) {
+        this.search = result;
+    },
+
+    gifStop : function() {
+
+    },
+
+    gifGo : function() {
+
+    },
+
+}
+
 
 // displayMovieInfo function re-renders the HTML to display the appropriate content
 function displayMovieInfo() {
 
-    var xhr = $.get("http://api.giphy.com/v1/gifs/search?q=ryan+gosling&api_key=BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&limit=5");
-    xhr.done(function(data) { console.log("success got data", data); });
 
-    var movie = $(this).attr("data-name");
-    var queryURL = "https://www.omdbapi.com/?t=" + movie + "&apikey=trilogy";
-
-    // Creates AJAX call for the specific movie button being clicked
-    $.ajax({
-    url: queryURL,
-    method: "GET"
-    }).then(function(response) {
-    console.log(response);
+    
     // Creates a div to hold the movie
     $("<div id='movieInfo'></div>").prependTo("#movies-view")
     // Retrieves the Rating Data
