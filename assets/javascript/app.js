@@ -1,9 +1,9 @@
 let gameObject = {
 
     // array of searches, buttons created based on content of this, stored in localStorage
-    itemArray : [],
+    itemArray : ["Test"],
 
-    // 
+    // current search
     search : "",
 
     // Giphy API key
@@ -13,130 +13,97 @@ let gameObject = {
     resultNumber : 10, // returns 10 results
 
     // connects to giphy to obtain gifs
-    queryURL : `https://api.giphy.com/v1/gifs/search?q=${search}&api_key=${key}&limit=${resultNumber}`,
+    queryURL : "https://api.giphy.com/v1/gifs/search?q=${this.search}&api_key=${this.key}&limit=${this.resultNumber}",
 
-    // create intial HTML elements
-    initialHtml : function() {
+    // check localStorage and create intial HTML elements
+    initialize : function() {
+        // if (localStorage.getItem("arrayItem")) {
+        //     itemArray = JSON.parse(localStorage.getItem("arrayItem"));
+        // }
 
-        $("<form id='searchForm'>").appendTo("main");
+        $("<form>").attr("id", "searchForm").appendTo("main");
 
             $("<p/>").text("Search: ").appendTo("#searchForm");
 
             $("<textarea/>").attr("id", "searchInput").appendTo("#searchForm");
 
-            $("<button>").attr("id", "searchButton").appendTo("#searchForm");
+            $("<button>").attr("id", "searchButton").text("Search").appendTo("#searchForm");
 
         $("<div/>").attr("id", "buttonContainer").appendTo("main");
     },
 
     // create buttons based on contents of itemArray
-    createButtons : function() {
+    arrayButtons : function() {
+        // clear buttonContainer to prevent duplicates
         $("#buttonContainer").empty();
+        // create a button for each item in itemArray
         this.itemArray.forEach(function(i) {
-            $("<button>").attr("data-name", gameObject.itemArray[i]).text(gameObject.itemArray[i]).appendTo("#buttonContainer");
+            console.log(i);
+            $("<button>").attr("data-name", i).text(i).appendTo("#buttonContainer");
         });
     },
 
-
-    workingButtons : function() {
-        // creates AJAX call for the specific movie button being clicked
+    liveButton : function() {
+        // creates AJAX call for the specific search
         $.ajax({
             url: gameObject.queryURL,
             method: "GET"
             }).then(function(response) {
             let results = response.data;
-            console.log(response);
+            console.log(results);
             });
     },
 
     search : function(result) {
         this.search = result;
+        this.liveButton();
+    },
+
+    newButton : function() {
+        // when the search button is clicked
+        $("#searchButton").on("click", function(event) {
+            // prevents something...
+            event.preventDefault;
+            let currentSearch = $("#searchInput").val().trim();
+            console.log(currentSearch);
+            // may need to update for random characters
+            if (currentSearch !== "") {
+                gameObject.itemArray.push(currentSearch);
+                console.log(gameObject.itemArray);
+                //localStorage.clear();
+                //localStorage.setItem("arrayItem", JSON.stringify(itemArray));
+            gameObject.search(currentSearch);
+            gameObject.arrayButtons();
+            $("#searchInput").val("");
+            }
+        });
+    },
+
+    testGifStatus : function() {
+        // create a class 
+        $(document).on("click", "class goes here", function() {
+            let gifState = $(this).attr("data-state");
+            console.log(gifState);
+            if (gifState === "animate") {
+                gifStop();
+            }
+            else if (gifState === "still") {
+                gifGo();
+            }
+        });
     },
 
     gifStop : function() {
-
+        $(this).attr("data-state", "still")
+        // css effects
     },
 
     gifGo : function() {
-
+        $(this).attr("data-state", "animate")
+        // css effects
     },
 
 }
 
-
-// displayMovieInfo function re-renders the HTML to display the appropriate content
-function displayMovieInfo() {
-
-
-    
-    // Creates a div to hold the movie
-    $("<div id='movieInfo'></div>").prependTo("#movies-view")
-    // Retrieves the Rating Data
-    var ratings = "Rated: " + response.Rated;
-    // Creates an element to have the rating displayed
-    $("<div id='ratings'></div>").appendTo("#movieInfo")
-    // Displays the rating
-    $("#ratings").append(ratings);
-    // Retrieves the release year
-    var released = "Release Date: " + response.Released;
-    // Creates an element to hold the release year
-    $("<div id='released'></div>").appendTo("#movieInfo")
-    // Displays the release year
-    $("#released").append(released);
-    // Retrieves the plot
-    var plot = "Plot: " + response.Plot;
-    // Creates an element to hold the plot
-    $("<div id='plot'></div>").appendTo("#movieInfo")
-    // Appends the plot
-    $("#plot").append(plot);
-    // Creates an element to hold the image
-    $("<div id='img1'></div>").appendTo("#movieInfo")
-    // Appends the image
-    $("#img1").append("<img src=" + response.Poster + "/>")
-    // Puts the entire Movie above the previous movies.
-
-    });
-
-}
-
-// Function for displaying movie data
-function renderButtons() {
-
-    // Deletes the movies prior to adding new movies
-    // (this is necessary otherwise you will have repeat buttons)
-    $("#buttons-view").empty();
-    // Loops through the array of movies
-    for (var i = 0; i < movies.length; i++) {
-
-    // Then dynamicaly generates buttons for each movie in the array
-    // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
-    var a = $("<button>");
-    // Adds a class of movie to our button
-    a.addClass("movie");
-    // Added a data-attribute
-    a.attr("data-name", movies[i]);
-    // Provided the initial button text
-    a.text(movies[i]);
-    // Added the button to the buttons-view div
-    $("#buttons-view").append(a);
-    }
-}
-
-// This function handles events where the add movie button is clicked
-$("#add-movie").on("click", function(event) {
-    event.preventDefault();
-    // This line of code will grab the input from the textbox
-    var movie = $("#movie-input").val().trim();
-
-    // The movie from the textbox is then added to our array
-    movies.push(movie);
-
-    // Calling renderButtons which handles the processing of our movie array
-    renderButtons();
-});
-
-// Adding click event listeners to all elements with a class of "movie"
-$(document).on("click", ".movie", displayMovieInfo);
-
-// Calling the renderButtons function to display the intial buttons
-renderButtons();
+gameObject.initialize();
+gameObject.arrayButtons();
