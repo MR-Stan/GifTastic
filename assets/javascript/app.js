@@ -7,15 +7,15 @@ let gameObject = {
     currentSearch : "",
 
     // Giphy API key
-    key : "BImvRhJyYtNtABPNHp8mKOJB36yjcfK2",
+    key : "api_key=BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&q=",
 
     // number of gifs display on screen after button click
-    limit : 10, // returns 10 results
+    limit : "&limit=10", // returns 10 results
 
-    // connects to giphy to obtain gifs
-    //queryURL : "https://api.giphy.com/v1/gifs/search?q=${this.search}&api_key=${this.key}&limit=${this.limit}",
+    // connect to giphy to obtain gifs
+    queryURL : "https://api.giphy.com/v1/gifs/search?",
 
-    queryURL : "https://api.giphy.com/v1/gifs/search?api_key=BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&q=&limit=25&offset=0&rating=G&lang=en",
+    //queryURL : "https://api.giphy.com/v1/gifs/search?api_key=BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&q=" + this.currentSearch + "&limit=10&offset=0&rating=G&lang=en",
 
     // check localStorage and create intial HTML elements
     initialize : function() {
@@ -32,6 +32,8 @@ let gameObject = {
             $("<button type='button'>").attr("id", "searchButton").text("Search").appendTo("#searchForm");
 
         $("<div/>").attr("id", "buttonContainer").appendTo("main");
+
+        $("<div/>").attr("id", "gifContainer").appendTo("main");
  
         this.newButton();
     },
@@ -42,22 +44,34 @@ let gameObject = {
         $("#buttonContainer").empty();
         // create a button for each item in itemArray
         this.itemArray.forEach(function(i) {
-            $("<button>").attr("data-name", i).text(i).appendTo("#buttonContainer");
+            $("<button>").attr("data-name", i).addClass("gifButton").text(i).appendTo("#buttonContainer");
+        });
+        $(".gifButton").on("click", function() { 
+            gameObject.liveButton();
         });
     },
 
-    // when a button is clicked
+    //when a button is clicked
     liveButton : function() {
+        //$("#buttonContainer").empty();
         // creates AJAX call for the specific search
         $.ajax({
-            url: gameObject.queryURL,
+            url: gameObject.queryURL + gameObject.key + gameObject.currentSearch + gameObject.limit,
             method: "GET"
             }).then(function(response) {
                 console.log(response);
                 let results = response.data;
                 console.log(results);
+            
+
+                for (let i = 0; i < results.length; i++) {
+                    $("<img>").attr("src", results[i].images.fixed_height_still.url).addClass("res-img").attr("data-still", results[i].images.fixed_height_still.url).attr("data-animate", results[i].images.fixed_height.url).attr("data-state", "still").prependTo("#gifContainer");
+                    $("<p/>").text("Rating: " + results[i].rating.toUpperCase()).prependTo("#gifContainer");
+
+            };
 
             });
+    
     },
 
     newButton : function() {
@@ -66,7 +80,7 @@ let gameObject = {
             // prevents something...
             event.preventDefault;
             // taking in user input
-            gameObject.currentSearch = $("#searchInput").val().trim();
+            gameObject.currentSearch = $("#searchInput").val().toLowerCase().trim();
             // may need to update for random characters
             // as long as currentSearch isn't blank do...
             if (gameObject.currentSearch !== "") {
@@ -75,9 +89,9 @@ let gameObject = {
                 // localStorage for next time
                 // localStorage.clear();
                 // localStorage.setItem("arrayItem", JSON.stringify(itemArray));
+
             gameObject.arrayButtons();
             $("#searchInput").val("");
-            gameObject.liveButton();
             }
         });
     },
