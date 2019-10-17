@@ -59,20 +59,24 @@ let gameObject = {
             url: gameObject.queryURL + gameObject.key + gameObject.currentSearch + gameObject.limit,
             method: "GET"
             }).then(function(response) {
-                console.log(response);
-                let results = response.data;
-                console.log(results);
-            
+                let results = response.data;          
+                console.log(results);  
 
                 for (let i = 0; i < results.length; i++) {
-                    $("<img>").attr("src", results[i].images.fixed_height_still.url).addClass("res-img").attr("data-still", results[i].images.fixed_height_still.url).attr("data-animate", results[i].images.fixed_height.url).attr("data-state", "still").prependTo("#gifContainer");
-                    $("<p/>").text("Rating: " + results[i].rating.toUpperCase()).prependTo("#gifContainer");
+                    $("<img>").addClass("gif")
+                        .attr("src", results[i].images.fixed_height_still.url)
+                        .attr("data-still", results[i].images.fixed_height_still.url)
+                        .attr("data-animate", results[i].images.fixed_height.url)
+                        .attr("data-state", "still")
+                        .prependTo("#gifContainer");
+                    $("<p/>").text("Rating: " + results[i].rating
+                        .toUpperCase())
+                        .prependTo("#gifContainer");
 
             };
-
+            gameObject.testGifStatus();
             });
-    
-    },
+        },
 
     newButton : function() {
         // when the search button is clicked
@@ -96,33 +100,19 @@ let gameObject = {
         });
     },
 
-    // // check if a gif is moving or still
-    // testGifStatus : function() {
-    //     // create a class 
-    //     $(document).on("click", "class goes here", function() {
-    //         let gifState = $(this).attr("data-state");
-    //         console.log(gifState);
-    //         if (gifState === "animate") {
-    //             gifStop();
-    //         }
-    //         else if (gifState === "still") {
-    //             gifGo();
-    //         }
-    //     });
-    // },
-
-    // // make a moving gif stop
-    // gifStop : function() {
-    //     $(this).attr("data-state", "still")
-    //     // css effects
-    // },
-
-    // // make a still gif move
-    // gifGo : function() {
-    //     $(this).attr("data-state", "animate")
-    //     // css effects
-    // },
-
+    // check if a gif is moving or still
+    testGifStatus : function() {
+        $("#gifContainer").on("click", ".gif", function() {
+            if ($(this).attr("data-state") === "animate") {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+            else if ($(this).attr("data-state") === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            }
+        });
+    },
 }
 
 gameObject.initialize();
