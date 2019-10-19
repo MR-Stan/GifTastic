@@ -1,3 +1,37 @@
-main {
-    font-size: 4em;
+body {
+    background-color: steelblue;
+    font-size: 2em;
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+    grid-template-rows: 20% 20% 60%;
+    color: white;
+    margin: auto;
+}
+
+#searchForm {
+    grid-area: 1 / 2 / 2 / 3;
+    display: inline-flex;
+}
+
+#buttonContainer {
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+.gifButton {
+    grid-area: 3 / 2 / 4 / 3;
+    background-color: grey;
+    color: white;
+    border: 1px solid white;
+    font-size: 0.6em;
+    width: 4em;
+    height: 100%;
+}
+
+#gifContainer {
+
+}
+
+.gif {
+    border: 2px solid white;
+    margin: 5px;
 }

@@ -34,7 +34,7 @@ let gameObject = {
         $("<div/>").attr("id", "buttonContainer").appendTo("main");
 
         $("<div/>").attr("id", "gifContainer").appendTo("main");
- 
+        
         this.newButton();
     },
 
@@ -53,26 +53,22 @@ let gameObject = {
 
     //when a button is clicked
     liveButton : function() {
-        //$("#buttonContainer").empty();
         // creates AJAX call for the specific search
         $.ajax({
             url: gameObject.queryURL + gameObject.key + gameObject.currentSearch + gameObject.limit,
             method: "GET"
             }).then(function(response) {
                 let results = response.data;          
-                console.log(results);  
-
                 for (let i = 0; i < results.length; i++) {
+                    $("<p/>").text("Rating: " + results[i].rating
+                        .toUpperCase())
+                        .prependTo("#gifContainer");
                     $("<img>").addClass("gif")
                         .attr("src", results[i].images.fixed_height_still.url)
                         .attr("data-still", results[i].images.fixed_height_still.url)
                         .attr("data-animate", results[i].images.fixed_height.url)
                         .attr("data-state", "still")
                         .prependTo("#gifContainer");
-                    $("<p/>").text("Rating: " + results[i].rating
-                        .toUpperCase())
-                        .prependTo("#gifContainer");
-
             };
             gameObject.testGifStatus();
             });
