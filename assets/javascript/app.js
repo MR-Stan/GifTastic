@@ -1,31 +1,19 @@
-let gameObject = {
+let appObject = {
 
-    // array of searches, buttons created based on content of this, stored in localStorage
-    itemArray : [],
+    // array of searches, buttons created based on content of this
+    topics : ["hiking", "biking", "snowboarding", "running"],
 
     // current search
-    currentSearch : "",
-
-    // Giphy API key
-    key : "api_key=BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&q=",
+    search : "",
 
     // number of gifs display on screen after button click
-    limit : "&limit=10", // returns 10 results
+    limit : "10", // returns 10 results
 
-    // connect to giphy to obtain gifs
-    queryURL : "https://api.giphy.com/v1/gifs/search?",
-
-    //queryURL : "https://api.giphy.com/v1/gifs/search?api_key=BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&q=" + this.currentSearch + "&limit=10&offset=0&rating=G&lang=en",
-
-    // check localStorage and create intial HTML elements
+    // create intial HTML elements and run sebsequent functions
     initialize : function() {
-        // if (localStorage.getItem("arrayItem")) {
-        //     itemArray = JSON.parse(localStorage.getItem("arrayItem"));
-        // }
+         $("<form>").attr("id", "searchForm").appendTo("main");
 
-        $("<form>").attr("id", "searchForm").appendTo("main");
-
-            $("<p/>").text("Search: ").appendTo("#searchForm");
+            $("<p/>").text("Search for gifs: ").appendTo("#searchForm");
 
             $("<input/>").attr("id", "searchInput").appendTo("#searchForm");
 
@@ -35,32 +23,39 @@ let gameObject = {
 
         $("<div/>").attr("id", "gifContainer").appendTo("main");
         
+        this.arrayButtons();
         this.newButton();
+        this.checkGifStatus();
     },
 
-    // // create buttons based on contents of itemArray
+    // create buttons based on contents of topics
     arrayButtons : function() {
         // clear buttonContainer to prevent duplicates
         $("#buttonContainer").empty();
-        // create a button for each item in itemArray
-        this.itemArray.forEach(function(i) {
+        // create a button for each item in topics
+        this.topics.forEach(function(i) {
             $("<button>").attr("data-name", i).addClass("gifButton").text(i).appendTo("#buttonContainer");
-        });
+;        });
+        // when a button is clicked call showGif function
         $(".gifButton").on("click", function() { 
-            gameObject.liveButton();
+            appObject.search = $(this).data("name");
+            appObject.showGif();
         });
     },
 
     //when a button is clicked
-    liveButton : function() {
-        // creates AJAX call for the specific search
+    showGif : function() {
+        // Giphy API key
+        let key = "BImvRhJyYtNtABPNHp8mKOJB36yjcfK2&";
+        appObject.queryURL = "https://api.giphy.com/v1/gifs/search?q=" + this.search + "&limit=" + this.limit + "&api_key=" + key;
+        // creates AJAX call for the button
         $.ajax({
-            url: gameObject.queryURL + gameObject.key + gameObject.currentSearch + gameObject.limit,
+            url: appObject.queryURL,
             method: "GET"
             }).then(function(response) {
                 let results = response.data;          
                 for (let i = 0; i < results.length; i++) {
-                    $("<p/>").text("Rating: " + results[i].rating
+                    $("<p/>").addClass("ratings").text("Rating: " + results[i].rating
                         .toUpperCase())
                         .prependTo("#gifContainer");
                     $("<img>").addClass("gif")
@@ -69,8 +64,7 @@ let gameObject = {
                         .attr("data-animate", results[i].images.fixed_height.url)
                         .attr("data-state", "still")
                         .prependTo("#gifContainer");
-            };
-            gameObject.testGifStatus();
+                };
             });
         },
 
@@ -80,24 +74,19 @@ let gameObject = {
             // prevents something...
             event.preventDefault;
             // taking in user input
-            gameObject.currentSearch = $("#searchInput").val().toLowerCase().trim();
-            // may need to update for random characters
-            // as long as currentSearch isn't blank do...
-            if (gameObject.currentSearch !== "") {
-                // add the user's entry to itemArray and...
-                gameObject.itemArray.push(gameObject.currentSearch);
-                // localStorage for next time
-                // localStorage.clear();
-                // localStorage.setItem("arrayItem", JSON.stringify(itemArray));
-
-            gameObject.arrayButtons();
-            $("#searchInput").val("");
+            appObject.search = $("#searchInput").val().toLowerCase().trim();
+            // as long as search isn't blank...
+            if (appObject.search !== "") {
+                // add the user's entry to topics and...
+                appObject.topics.push(appObject.search);
+                appObject.arrayButtons();
+                $("#searchInput").val("");
             }
         });
     },
 
     // check if a gif is moving or still
-    testGifStatus : function() {
+    checkGifStatus : function() {
         $("#gifContainer").on("click", ".gif", function() {
             if ($(this).attr("data-state") === "animate") {
                 $(this).attr("src", $(this).attr("data-still"));
@@ -111,7 +100,7 @@ let gameObject = {
     },
 }
 
-gameObject.initialize();
-//
+appObject.initialize();
+
 
 

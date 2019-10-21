@@ -1,30 +1,18 @@
 body {
     background-color: steelblue;
     font-size: 2em;
-    display: grid;
-    grid-template-columns: 20% 60% 20%;
-    grid-template-rows: 20% 20% 60%;
     color: white;
     margin: auto;
-}
-
-#searchForm {
-    grid-area: 1 / 2 / 2 / 3;
-    display: inline-flex;
-}
-
-#buttonContainer {
-    grid-area: 2 / 2 / 3 / 3;
+    text-align: center;
 }
 
 .gifButton {
-    grid-area: 3 / 2 / 4 / 3;
     background-color: grey;
     color: white;
     border: 1px solid white;
-    font-size: 0.6em;
-    width: 4em;
+    font-size: 0.5em;
     height: 100%;
+    margin: 0 0.5%;
 }
 
 #gifContainer {
@@ -33,5 +21,10 @@ body {
 
 .gif {
     border: 2px solid white;
-    margin: 5px;
+    margin-top: 4%;
+}
+
+.ratings {
+    margin: 0 auto;
+    font-size: 0.75em;
 }
