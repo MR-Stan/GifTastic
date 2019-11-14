@@ -1,6 +1,5 @@
 # GifTastic
----
-Find the sweetest Gif's on the interweb with the click of a button!
+Find the sweetest Gif's on the interwebs with the click of a button!
 
 ### Check it out: https://mr-stan.github.io/GifTastic/
 
